@@ -1,0 +1,5 @@
+
+{
+  "name": "User & Ticket Management System (UTMS)",
+  "description": "A comprehensive system for managing users and support tickets. It features role-based access control, social logins, and full CRUD functionality for tickets and users, designed with a modern and responsive user interface."
+}
