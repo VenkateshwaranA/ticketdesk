@@ -14,6 +14,9 @@ Create `frontend/.env` (or `.env.local`) with:
 VITE_BACKEND_URL=http://localhost:3000/api
 ```
 
+Loom Link - https://www.loom.com/share/68079227fcda4b4388240741956f959e?sid=444fe486-15ac-4ccc-aacb-ef7d9a8607b6
+
+
 Install and run
 
 1. Node.js 18+
