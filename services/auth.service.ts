@@ -8,9 +8,10 @@ export async function loginWithEmailPassword(email: string, password: string): P
   setAccessToken(data.accessToken);
 }
 
-export async function loginWithOAuth(provider: 'google' | 'github' | 'facebook'): Promise<void> {
-  // For OAuth, perform a top-level redirect so the browser can follow cross-origin flows
-  window.location.href = `${API_BASE_URL}/auth/${provider}`;
+export async function loginWithOAuth(provider: 'google', role: 'ADMIN' | 'USER'): Promise<void> {
+  // Redirect to the OAuth endpoint with the role as a query parameter
+  const redirectUrl = `${API_BASE_URL}/auth/${provider}?role=${encodeURIComponent(role)}`;
+  window.location.href = redirectUrl;
 }
 
 export async function getMe(): Promise<{ id: string; email: string; roles: string[] } | null> {

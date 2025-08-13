@@ -10,7 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   permissions: Permission[];
-  login: (provider: 'google' , role?: 'ADMIN' | 'USER', email?: string, password?: string) => Promise<void>;
+  login: (provider: 'google', role?: 'ADMIN' | 'USER', email?: string, password?: string) => Promise<void>;
   logout: () => Promise<void>;
   hasPermission: (permission: Permission) => boolean;
   loading: boolean;
@@ -25,8 +25,8 @@ const defaultContext: AuthContextType = {
   isAuthenticated: false,
   user: null,
   permissions: [],
-  login: async () => {},
-  logout: async () => {},
+  login: async () => { },
+  logout: async () => { },
   hasPermission: () => false,
   loading: false,
   error: null,
@@ -47,31 +47,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
   const loadUserFromStorage = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      // Handle OAuth token from URL
-      const hash = window.location.hash;
-      const match = hash.match(/token=([^&]+)/);
-      
-      if (match) {
-        const token = decodeURIComponent(match[1]);
-        setAccessToken(token);
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      // Handle OAuth token from query string (no hash routing)
+      const url = new URL(window.location.href);
+      const tokenParam = url.searchParams.get('token');
+      if (tokenParam) {
+        setAccessToken(tokenParam);
+        url.searchParams.delete('token');
+        const cleaned = url.pathname + (url.search ? url.search : '');
+        window.history.replaceState(null, '', cleaned);
       }
 
-      // Check cached user in sessionStorage
-      const storedUser = sessionStorage.getItem('utms_user');
-      if (storedUser) {
-        try {
-          const parsedUser: User = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setPermissions(PERMISSIONS_MAP[parsedUser.role] || []);
-          return;
-        } catch (parseError) {
-          console.warn('Failed to parse stored user:', parseError);
-          sessionStorage.removeItem('utms_user');
-        }
-      }
+      // No sessionStorage caching; always rely on API when token exists
 
       // Fetch user if token exists
       const token = getAccessToken();
@@ -81,12 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
           const mapped = mapBackendUserToFrontend(me);
           setUser(mapped);
           setPermissions(PERMISSIONS_MAP[mapped.role] || []);
-          sessionStorage.setItem('utms_user', JSON.stringify(mapped));
+          // User stored only in memory; re-fetch from API when needed
         }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed');
-      sessionStorage.removeItem('utms_user');
+      // Clear in-memory state only; no session storage
       setAccessToken(null);
       setUser(null);
       setPermissions([]);
@@ -97,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
 
   // Handle login
   const login = useCallback(async (
-    provider: 'google' ,
+    provider: 'google',
     role?: 'ADMIN' | 'USER',
     email?: string,
     password?: string
@@ -107,26 +95,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
 
     try {
       // Validate inputs
-      if (provider !== 'google' && provider !== 'github' && provider !== 'facebook' && (!email || !password)) {
+      if (provider !== 'google' && (!email || !password)) {
         throw new Error('Invalid login credentials');
       }
 
       // Perform login
-      if (provider === 'google' || provider === 'github' || provider === 'facebook') {
-        await loginWithOAuth(provider);
+      if (provider === 'google') {
+        await loginWithOAuth(provider,role);
       } else if (email && password) {
         await loginWithEmailPassword(email, password);
       }
 
       const me = await getMe();
-      if (!me) throw new Error('Failed to fetch user profile');
+      // if (!me) throw new Error('Failed to fetch user profile');
 
       const mapped = mapBackendUserToFrontend(me);
       setUser(mapped);
       setPermissions(PERMISSIONS_MAP[mapped.role] || []);
-      sessionStorage.setItem('utms_user', JSON.stringify(mapped));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      // setError(err instanceof Error ? err.message : 'Login failed');
       throw err;
     } finally {
       setLoading(false);
@@ -140,7 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
       setUser(null);
       setPermissions([]);
       setAccessToken(null);
-      sessionStorage.removeItem('utms_user');
+      // No session storage to clear
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Logout failed');
     }

@@ -7,6 +7,8 @@ export type BackendTicket = {
   description?: string;
   ownerId: string;
   assignedTo?: string | null;
+  status?: 'OPEN' | 'IN_PROGRESS' | 'DONE';
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
   createdAt?: string;
 };
 

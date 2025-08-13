@@ -32,6 +32,8 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, onUpdate, onEdit, isLis
         await updateTicketApi(ticket.id, { status: TicketStatus.DONE as unknown as any });
         onUpdate();
     }
+
+    const canChangeStatusOrPriority = hasPermission(Permission.CAN_MANAGE_ALL_TICKETS);
     
     const priorityClasses: Record<TicketPriority, string> = {
         [TicketPriority.LOW]: 'text-green-800 dark:text-green-200 bg-green-100 dark:bg-green-900',
@@ -73,12 +75,34 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, onUpdate, onEdit, isLis
                     <div className="text-sm text-gray-500 dark:text-gray-400">{ticket.description}...</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                    <TicketStatusBadge status={ticket.status} />
+                    <div className="flex items-center space-x-2">
+                        <TicketStatusBadge status={ticket.status} />
+                        {/* {canChangeStatusOrPriority && (
+                            <select
+                                className="text-xs border rounded px-1 py-0.5 dark:bg-gray-700 dark:border-gray-600"
+                                value={ticket.status}
+                                onChange={async (e) => { await updateTicketApi(ticket.id, { status: e.target.value as any }); onUpdate(); }}
+                            >
+                                {Object.values(TicketStatus).map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        )} */}
+                    </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${priorityClasses[ticket.priority]}`}>
-                        {ticket.priority}
-                    </span>
+                    <div className="flex items-center space-x-2">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${priorityClasses[ticket.priority]}`}>
+                            {ticket.priority}
+                        </span>
+                        {/* {canChangeStatusOrPriority && (
+                            <select
+                                className="text-xs border rounded px-1 py-0.5 dark:bg-gray-700 dark:border-gray-600"
+                                value={ticket.priority}
+                                onChange={async (e) => { await updateTicketApi(ticket.id, { priority: e.target.value as any }); onUpdate(); }}
+                            >
+                                {Object.values(TicketPriority).map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                        )} */}
+                    </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(ticket.createdAt).toLocaleDateString()}

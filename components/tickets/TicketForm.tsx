@@ -51,7 +51,6 @@ const TicketForm: React.FC<TicketFormProps> = ({ ticket, onSave, onCancel }) => 
         const ticketData = {
             title,
             description,
-            // status and priority are not supported by the current backend DTO; remove from update payload
             ...(typeof assignedTo === 'string' && assignedTo ? { assignedTo } : {}),
             ...(typeof status === 'string' && status ? { status } : {}),
             ...(typeof priority === 'string' && priority ? { priority } : {}),
