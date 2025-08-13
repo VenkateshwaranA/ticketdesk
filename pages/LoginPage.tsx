@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
     const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = async (provider: 'google' | 'github' | 'facebook', role: 'ADMIN' | 'USER') => {
+    const handleLogin = async (provider: 'google' , role: 'ADMIN' | 'USER') => {
         setLoadingProvider(`${provider}-${role}`);
         setError(null);
         try {
@@ -57,20 +57,7 @@ const LoginPage: React.FC = () => {
                             onClick={() => handleLogin('google', 'USER')}
                             disabled={loadingProvider === 'google-USER'}
                         />
-                        <ProviderButton 
-                            provider="github" 
-                            name="Sign in with GitHub" 
-                            icon={<GithubIcon className="w-5 h-5" />}
-                            onClick={() => handleLogin('github', 'USER')}
-                            disabled={loadingProvider === 'github-USER'}
-                        />
-                        <ProviderButton 
-                            provider="facebook" 
-                            name="Sign in with Facebook" 
-                            icon={<FacebookIcon className="w-5 h-5" />}
-                            onClick={() => handleLogin('facebook', 'USER')}
-                            disabled={loadingProvider === 'facebook-USER'}
-                        />
+                        
                     </div>
                     
                     <div className="relative">

@@ -10,7 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   permissions: Permission[];
-  login: (provider: 'google' | 'github' | 'facebook', role?: 'ADMIN' | 'USER', email?: string, password?: string) => Promise<void>;
+  login: (provider: 'google' , role?: 'ADMIN' | 'USER', email?: string, password?: string) => Promise<void>;
   logout: () => Promise<void>;
   hasPermission: (permission: Permission) => boolean;
   loading: boolean;
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
 
   // Handle login
   const login = useCallback(async (
-    provider: 'google' | 'github' | 'facebook',
+    provider: 'google' ,
     role?: 'ADMIN' | 'USER',
     email?: string,
     password?: string
