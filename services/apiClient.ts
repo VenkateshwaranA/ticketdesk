@@ -1,4 +1,4 @@
-export const API_BASE_URL = (import.meta as any)?.env?.VITE_API_BASE || 'http://localhost:3000/api';
+export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL! as string
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -21,6 +21,7 @@ export function setAccessToken(token: string | null): void {
 
 export async function http<T>(path: string, options: { method?: HttpMethod; body?: any; headers?: Record<string, string> } = {}): Promise<T> {
   const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+  console.log(url,"urlllllllllllllll")
   const token = getAccessToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
